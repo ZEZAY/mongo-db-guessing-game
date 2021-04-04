@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+        crossorigin="anonymous"></script>
+    <title>play</title>
+</head>
+
+<style>
+    body {
+        background-color: rgb(227, 248, 213);
+        color: rgb(71, 21, 52);
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    }
+
+    .contain {
+        margin-top: 3%;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .btn {
+        background-color: aliceblue;
+        border-color: rgb(137, 188, 233);
+        color: rgb(34, 73, 29);
+        font-size: xx-large;
+        margin: 2%;
+    }
+
+    .choose_btn {
+        border-radius: 5rem;
+    }
+
+    .input_field {
+        width: 50px;
+        border-radius: 0rem;
+    }
+
+    form {
+        background-color: darkcyan;
+        padding: 2%;
+        margin: 0 auto;
+        width: 50%;
+    }
+</style>
+
+<body class="contain">
+    <h1>Guess your answer!!</h1>
+    <h2>
+        <column>
+            Guessing Time:
+        </column>
+        <column>
+            $count
+        </column>
+    </h2>
+    <br>
+
+    <form id="game_form" method="post">
+        <input id="pos0" class="btn input_field" name="pos0">
+        <input id="pos1" class="btn input_field" name="pos1">
+        <input id="pos2" class="btn input_field" name="pos2">
+        <input id="pos3" class="btn input_field" name="pos3">
+        <button type="button" class="btn" style="font-size: x-large;" onclick="send_ans()">Submit</button>
+    </form>
+
+    <div>
+        <button class="btn choose_btn" onclick="change_text('A')">A</button>
+        <button class="btn choose_btn" onclick="change_text('B')">B</button>
+        <button class="btn choose_btn" onclick="change_text('C')">C</button>
+        <button class="btn choose_btn" onclick="change_text('D')">D</button>
+    </div>
+
+    <h2 id="hint" style="color:rgb(137, 188, 233); display: none">
+        Hint: $hint
+    </h2>
+</body>
+
+<script>
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const hint = urlParams.get('hint')
+
+    if (hint == "show") {
+        document.getElementById("hint").style.display = "block"
+    }
+
+    var count = 0;
+    function change_text(text) {
+        document.getElementById("pos" + count % 4).value = text
+        count++
+    }
+
+    function delete_text() {
+        if (document.getElementById("pos3").value != "") {
+            document.getElementById("pos3").value = ""
+        } else if (document.getElementById("pos2").value != "") {
+            document.getElementById("pos2").value = ""
+        } else if (document.getElementById("pos1").value != "") {
+            document.getElementById("pos1").value = ""
+        } else {
+            document.getElementById("pos0").value = ""
+        }
+        count--
+    }
+
+    question = $question
+    function send_ans() {
+        pos0 = document.getElementById("pos0").value
+        pos1 = document.getElementById("pos1").value
+        pos2 = document.getElementById("pos2").value
+        pos3 = document.getElementById("pos3").value
+
+        if (pos0 != "" && pos1 != "" && pos2 != "" && pos3 != "") {
+            if (pos0 == question[0] && pos1 == question[1] && pos2 == question[2] && pos3 == question[3]) {
+                document.getElementById("game_form").action = "/gameover"
+            } else {
+                document.getElementById("game_form").action = "/play?hint=show"
+            }
+            document.getElementById("game_form").submit()
+        }
+        else {
+            window.alert("You need to guess 4 characters.")
+        }
+    }
+
+    const log = document.getElementById('log');
+    document.addEventListener('keydown', logKey);
+
+    function logKey(e) {
+        // a-z => 65 - 90
+        if (e.keyCode >= 65 && e.keyCode <= 68) {
+            change_text(e.key.toUpperCase())
+        }
+        if (e.key == 'Backspace') {
+            delete_text()
+        }
+        if (e.key == 'Enter') {
+            send_ans()
+        }
+    }
+
+</script>
+
+</html>
